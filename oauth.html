@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"
+    ></script>
+    <script src="https://live.zwidgets.com/js-sdk/1.1/ZohoEmbededAppSDK.min.js"></script>
+  </head>
+  <style>
+    * {
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+    }
+    body {
+      font-family: "Roboto", sans-serif;
+      color: #546e7a;
+    }
+    #form1 {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      gap: 3rem;
+      align-items: center;
+      justify-content: center;
+    }
+    .wrapper {
+      max-width: 18rem;
+    }
+    label {
+      font-size: 0.75rem;
+      font-weight: 400;
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #b0bec5;
+      border: 1px solid #eceff1;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+    }
+    input {
+      font-family: "Roboto", sans-serif;
+      display: block;
+      border: none;
+      border-radius: 0.25rem;
+      border: 1px solid transparent;
+      line-height: 1.5rem;
+      padding: 0;
+      font-size: 1rem;
+      color: #607d8b;
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+    input:focus {
+      outline: none;
+    }
+    select {
+      font-family: "Roboto", sans-serif;
+      display: block;
+      border: none;
+      border-radius: 0.25rem;
+      border: 1px solid transparent;
+      line-height: 1.5rem;
+      padding: 0;
+      font-size: 1rem;
+      color: #607d8b;
+      width: fit-content;
+      margin-top: 0.5rem;
+    }
+    select:focus {
+      outline: none;
+    }
+    #ui-datepicker-div {
+      display: none;
+      background-color: #fff;
+      box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+      margin-top: 0.25rem;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+    }
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+    }
+    .ui-datepicker-calendar thead th {
+      padding: 0.25rem 0;
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: #78909c;
+    }
+    .ui-datepicker-calendar tbody td {
+      width: 2.5rem;
+      text-align: center;
+      padding: 0;
+    }
+    .ui-datepicker-calendar tbody td a {
+      display: block;
+      border-radius: 0.25rem;
+      line-height: 2rem;
+      transition: 0.3s all;
+      color: #546e7a;
+      font-size: 0.875rem;
+      text-decoration: none;
+    }
+    .ui-datepicker-calendar tbody td a:hover {
+      background-color: #e0f2f1;
+    }
+    .ui-datepicker-calendar tbody td a.ui-state-active {
+      background-color: #009688;
+      color: white;
+    }
+    .ui-datepicker-header a.ui-corner-all {
+      cursor: pointer;
+      position: absolute;
+      top: 0;
+      width: 2rem;
+      height: 2rem;
+      margin: 0.5rem;
+      border-radius: 0.25rem;
+      transition: 0.3s all;
+    }
+    .ui-datepicker-header a.ui-corner-all:hover {
+      background-color: #eceff1;
+    }
+    .ui-datepicker-header a.ui-datepicker-prev {
+      left: 0;
+      background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgdmlld0JveD0iMCAwIDEzIDEzIj48cGF0aCBmaWxsPSIjNDI0NzcwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjI4OCA2LjI5NkwzLjIwMiAyLjIxYS43MS43MSAwIDAgMSAuMDA3LS45OTljLjI4LS4yOC43MjUtLjI4Ljk5OS0uMDA3TDguODAzIDUuOGEuNjk1LjY5NSAwIDAgMSAuMjAyLjQ5Ni42OTUuNjk1IDAgMCAxLS4yMDIuNDk3bC00LjU5NSA0LjU5NWEuNzA0LjcwNCAwIDAgMS0xLS4wMDcuNzEuNzEgMCAwIDEtLjAwNi0uOTk5bDQuMDg2LTQuMDg2eiIvPjwvc3ZnPg==");
+      background-repeat: no-repeat;
+      background-size: 0.5rem;
+      background-position: 50%;
+      transform: rotate(180deg);
+    }
+    .ui-datepicker-header a.ui-datepicker-next {
+      right: 0;
+      background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMyIgaGVpZ2h0PSIxMyIgdmlld0JveD0iMCAwIDEzIDEzIj48cGF0aCBmaWxsPSIjNDI0NzcwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjI4OCA2LjI5NkwzLjIwMiAyLjIxYS43MS43MSAwIDAgMSAuMDA3LS45OTljLjI4LS4yOC43MjUtLjI4Ljk5OS0uMDA3TDguODAzIDUuOGEuNjk1LjY5NSAwIDAgMSAuMjAyLjQ5Ni42OTUuNjk1IDAgMCAxLS4yMDIuNDk3bC00LjU5NSA0LjU5NWEuNzA0LjcwNCAwIDAgMS0xLS4wMDcuNzEuNzEgMCAwIDEtLjAwNi0uOTk5bDQuMDg2LTQuMDg2eiIvPjwvc3ZnPg==");
+      background-repeat: no-repeat;
+      background-size: 10px;
+      background-position: 50%;
+    }
+    .ui-datepicker-header a > span {
+      display: none;
+    }
+    .ui-datepicker-title {
+      text-align: center;
+      line-height: 2rem;
+      margin-bottom: 0.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding-bottom: 0.25rem;
+    }
+    .ui-datepicker-week-col {
+      color: #78909c;
+      font-weight: 400;
+      font-size: 0.75rem;
+    }
+    #section-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 1rem;
+    }
+    button {
+      background-color: #009688;
+      color: white;
+      border: none;
+      border-radius: 0.25rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s all;
+    }
+  </style>
+  <script>
+    ZOHO.embeddedApp.on("PageLoad", function (data) {
+      var id = data.EntityId;
+      var module = data.Entity;
+      console.log(id, module);
+      const calendarName = new URLSearchParams(window.location.search).get(
+        "calendar"
+      );
+      console.log(calendarName);
+      const calendarNameElement = document.createElement("h1");
+      calendarNameElement.innerText = `Calendar Name: ${calendarName}`;
+      document
+        .getElementById("section-button")
+        .appendChild(calendarNameElement);
+      ZOHO.CRM.API.getRecord({ Entity: module, RecordID: id }).then(function (
+        data
+      ) {
+        var firstName = data.data[0].First_Name ?? null;
+        var lastName = data.data[0].Last_Name ?? null;
+        var email = data.data[0].Email ?? null;
+        var phone = data.data[0].Phone ?? null;
+        if (firstName && lastName && email && phone) {
+          document.getElementById("form1").style.display = "block";
+        } else {
+          document.getElementById("fields-missing").style.display = "block";
+          document.getElementById("fields-missing").innerText =
+            "Please fill in all the fields \n First Name, Last Name, Email, Phone Number";
+        }
+      });
+    });
+
+    ZOHO.embeddedApp.init();
+    window.onload = async () => {
+      const url = new URL(window.location.href);
+      const code = url.searchParams.get("code");
+      const client_id = "6627d4b347c303d111a6e7ec-lvcjy7jj";
+      const client_secret = "f54ffb72-6160-4f65-b3d4-474b8bce97bf";
+      const calendarPage = "https://127.0.0:5000/app/hello.html";
+      console.log(code);
+      if (code) {
+        const encodedParams = new URLSearchParams();
+        encodedParams.set("client_id", client_id);
+        encodedParams.set("client_secret", client_secret);
+        encodedParams.set("grant_type", "authorization_code");
+        encodedParams.set("code", code);
+        encodedParams.set("user_type", "Location");
+        const options = {
+          method: "POST",
+          url: "https://services.leadconnectorhq.com/oauth/token",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Accept: "application/json",
+          },
+          data: encodedParams,
+        };
+
+        try {
+          const response = await axios.request(options).then((response) => {
+            console.log(response);
+            sessionStorage.setItem("token", response.data.access_token);
+            sessionStorage.setItem(
+              "refresh_token",
+              response.data.refresh_token
+            );
+            sessionStorage.setItem("expires_in", response.data.expires_in);
+            sessionStorage.setItem("locationId", response.data.locationId);
+            sessionStorage.setItem("companyId", response.data.companyId);
+          });
+          document.getElementById("wait").style.display = "none";
+          document.querySelector("a").style.display = "block";
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
+  </script>
+  <body>
+    <main>
+      <span id="wait">Hold on</span>
+      <a style="display: none" href="/hello.html">
+        <button>Continue</button>
+      </a>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://live.zwidgets.com/js-sdk/1.1/ZohoEmbededAppSDK.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"
+    ></script>
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.js"
+      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"
+      integrity="sha256-xLD7nhI62fcsEZK2/v8LsBcb4lG7dgULkuXoXB/j91c="
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      .slot-btn {
+        background-color: #aeaeae;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+      .slot-btn:hover {
+        background-color: #0077ff;
+      }
+      .slot-btn:active {
+        background-color: #0055ff;
+        box-shadow: 0 2px #666;
+        transform: translateY(1px);
+      }
+      ul {
+        list-style-type: none;
+        display: grid;
+        grid-template-columns: repeat(3, 0.5fr);
+        grid-gap: 7px;
+        padding: 0;
+        min-height: fit-content;
+        min-width: 6em;
+      }
+      main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      #info {
+        font-size: 1.5em;
+        font-weight: bold;
+        /* full grid row */
+        grid-column: 1 / -1;
+        /*align center */
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #333;
+        padding-bottom: 20px;
+      }
+      .modal {
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0); /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+      }
+      /* Modal Content/Box */
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+      }
+      /* The Close Button */
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      #confirm {
+        background-color: #0099ff;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+      }
+      #confirm:hover {
+        background-color: #0077ff;
+      }
+      #confirm:active {
+        background-color: #0066ff;
+        box-shadow: 0 5px #666;
+        transform: translateY(2px);
+      }
+    </style>
+  </head>
+  <script>
+    var url =
+      "http://ec2-13-52-102-78.us-west-1.compute.amazonaws.com:3000/freeslots";
+    window.onload = async () => {
+      const selectedDate = sessionStorage.getItem("date");
+      const selectedCalendar = sessionStorage.getItem("calendar");
+      const timezone = sessionStorage.getItem("timezone");
+      const date = new Date(selectedDate);
+      const startTimeInMs = date.getTime();
+      const endTimeInMs = startTimeInMs + 86400000;
+      const YYYYMMDD = new Date(selectedDate)
+        .toLocaleDateString("en-CA")
+        .toString();
+      console.log("YYYYMMDD", YYYYMMDD);
+      try {
+        await axios
+          .get(
+            "http://ec2-13-52-102-78.us-west-1.compute.amazonaws.com:3000/freeslots",
+            {
+              params: {
+                calendarId: selectedCalendar,
+                startDate: startTimeInMs.toString(),
+                endDate: endTimeInMs.toString(),
+                timezone: timezone.toString(),
+              },
+            }
+          )
+          .then(async (response) => {
+            const infoElement = document.getElementById("info");
+            infoElement.innerHTML = `Select a slot for ${selectedDate}`;
+            /* console.log("TIME SLOTS",await response.data.data[YYYYMMDD].slots); */
+            if (response.data.data[YYYYMMDD] === undefined) {
+              document.getElementById("info").innerHTML =
+                "No slots available for the selected date";
+              const confirmBtn = document.getElementById("confirm");
+              //enable back to calendar button
+              confirmBtn.removeAttribute("disabled");
+              confirmBtn.removeEventListener("click", confirmBtn.onclick);
+              confirmBtn.innerHTML = "Back to calendar";
+              confirmBtn.addEventListener("click", () => {
+                try {
+                  const backUrl = `/hello.html?calendar=${selectedCalendar}`;
+                  window.location.href = backUrl;
+                } catch (error) {
+                  console.log(error);
+                }
+              });
+
+              return;
+            }
+            const slots = await response.data.data[YYYYMMDD].slots;
+            console.log("SLOTS", slots);
+            //get slots object length
+            const slotsLength = Object.keys(slots).length;
+
+            if (slotsLength !== 0) {
+              for (const slot in slots) {
+                if (Object.hasOwnProperty.call(slots, slot)) {
+                  const slotElement = document.createElement("li");
+                  const slotBtn = document.createElement("button");
+                  slotBtn.onclick = () => {
+                    sessionStorage.setItem("slot", slots[slot]);
+                    const slotButtons = document.querySelectorAll(".slot-btn");
+                    slotButtons.forEach((slotButton) => {
+                      slotButton.style.backgroundColor = "#aeaeae";
+                    });
+                    //set selected slot to blue
+                    slotBtn.style.backgroundColor = "#0055ff";
+                    //enable confirm button
+                    document.getElementById("confirm").disabled = false;
+                  };
+                  const properTime = slots[slot].split("T")[1].split("-")[0];
+                  const justTime =
+                    properTime.split(":")[0] + ":" + properTime.split(":")[1];
+                  slotBtn.innerHTML = justTime;
+                  slotBtn.classList.add("slot-btn");
+                  slotElement.appendChild(slotBtn);
+                  document.getElementById("slots").appendChild(slotElement);
+                }
+              }
+            } else {
+              const slotElement = document.createElement("p");
+              slotElement.innerHTML =
+                "No slots available for the selected date";
+              document.getElementById("slots").appendChild(slotElement);
+            }
+          });
+
+        const confirmBtn = document.getElementById("confirm");
+        confirmBtn.onclick = async () => {
+          //disable confirm button
+          confirmBtn.disabled = true;
+          const slot = sessionStorage.getItem("slot");
+          const selectedCalendar = sessionStorage.getItem("calendar");
+          const firstName = sessionStorage.getItem("firstName");
+          const lastName = sessionStorage.getItem("lastName");
+          const email = sessionStorage.getItem("email");
+          const phone = sessionStorage.getItem("phone");
+          console.log("slot", slot);
+          try {
+            await axios
+              .get(
+                "http://ec2-13-52-102-78.us-west-1.compute.amazonaws.com:3000/bookMeeting",
+                {
+                  params: {
+                    calendar: selectedCalendar,
+                    slot: slot,
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    phone: phone,
+                  },
+                }
+              )
+              .then(async (response) => {
+                const res = await response.data;
+                console.log("RES: ", res.data);
+
+                if (res.data.id) {
+                  console.log("Booking successful");
+                  const modal = document.createElement("div");
+                  modal.classList.add("modal");
+                  const modalContent = document.createElement("div");
+                  modalContent.classList.add("modal-content");
+                  const close = document.createElement("span");
+                  close.classList.add("close");
+                  close.innerHTML = "&times;";
+                  close.onclick = () => {
+                    window.location.href = "/widget";
+                  };
+                  modalContent.appendChild(close);
+                  const p = document.createElement("p");
+                  p.innerHTML = "Booking successful";
+                  modalContent.appendChild(p);
+                  modal.appendChild(modalContent);
+                  document.body.appendChild(modal);
+                  modal.style.display = "block";
+                }
+              })
+              .then((res) => {
+                return res;
+              });
+          } catch (error) {
+            console.log("Second Error", error);
+            //enable confirm button
+            confirmBtn.disabled = false;
+            const modal = document.createElement("div");
+            modal.classList.add("modal");
+            const modalContent = document.createElement("div");
+            modalContent.classList.add("modal-content");
+            const close = document.createElement("span");
+            close.classList.add("close");
+            close.innerHTML = "&times;";
+            close.onclick = () => {
+              modal.style.display = "none";
+            };
+            modalContent.appendChild(close);
+            const p = document.createElement("p");
+            p.innerHTML = `Booking failed due to the following error: <br/><code>${error}`;
+            modalContent.appendChild(p);
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            modal.style.display = "block";
+          }
+        };
+      } catch (error) {
+        console.log(error);
+        const infoElement = document.getElementById("info");
+        infoElement.innerHTML = `Error loading the page ${error}`;
+      }
+    };
+  </script>
+  <body>
+    <main>
+      <ul id="slots">
+        <li id="info">Loading...</li>
+      </ul>
+      <button id="confirm" disabled>Confirm</button>
+    </main>
+  </body>
+</html>

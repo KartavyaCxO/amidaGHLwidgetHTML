@@ -80,7 +80,7 @@
 
                 button.onclick = async () => {
                   await sessionStorage.setItem("calendar", calendar.id);
-                  window.location.href = `/hello?calendar=${calendar.id}`;
+                  window.location.href = `/hello.html?calendar=${calendar.id}`;
                 };
                 document
                   .getElementById("calendarContainer")

@@ -126,8 +126,7 @@
     </style>
   </head>
   <script>
-    var url =
-      "http://ec2-13-52-102-78.us-west-1.compute.amazonaws.com:3000/freeslots";
+    var url = "https://amidawealth.yourcxo.online/freeslots";
     window.onload = async () => {
       const selectedDate = sessionStorage.getItem("date");
       const selectedCalendar = sessionStorage.getItem("calendar");
@@ -141,17 +140,14 @@
       console.log("YYYYMMDD", YYYYMMDD);
       try {
         await axios
-          .get(
-            "http://ec2-13-52-102-78.us-west-1.compute.amazonaws.com:3000/freeslots",
-            {
-              params: {
-                calendarId: selectedCalendar,
-                startDate: startTimeInMs.toString(),
-                endDate: endTimeInMs.toString(),
-                timezone: timezone.toString(),
-              },
-            }
-          )
+          .get("https://amidawealth.yourcxo.online/freeslots", {
+            params: {
+              calendarId: selectedCalendar,
+              startDate: startTimeInMs.toString(),
+              endDate: endTimeInMs.toString(),
+              timezone: timezone.toString(),
+            },
+          })
           .then(async (response) => {
             const infoElement = document.getElementById("info");
             infoElement.innerHTML = `Select a slot for ${selectedDate}`;
@@ -226,19 +222,16 @@
           console.log("slot", slot);
           try {
             await axios
-              .get(
-                "http://ec2-13-52-102-78.us-west-1.compute.amazonaws.com:3000/bookMeeting",
-                {
-                  params: {
-                    calendar: selectedCalendar,
-                    slot: slot,
-                    firstName: firstName,
-                    lastName: lastName,
-                    email: email,
-                    phone: phone,
-                  },
-                }
-              )
+              .get("https://amidawealth.yourcxo.online/bookMeeting", {
+                params: {
+                  calendar: selectedCalendar,
+                  slot: slot,
+                  firstName: firstName,
+                  lastName: lastName,
+                  email: email,
+                  phone: phone,
+                },
+              })
               .then(async (response) => {
                 const res = await response.data;
                 console.log("RES: ", res.data);

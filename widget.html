@@ -65,9 +65,7 @@
         var res = [];
         try {
           const data = await axios
-            .get(
-              "http://ec2-13-52-102-78.us-west-1.compute.amazonaws.com:3000/"
-            )
+            .get("https://amidawealth.yourcxo.online/")
             .then(async (response) => {
               res = await response.data.data.calendars;
               document.querySelector("#requirement").innerText =

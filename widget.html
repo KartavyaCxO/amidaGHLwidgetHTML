@@ -91,13 +91,29 @@
           console.log(err);
           document.getElementById("requirement").innerText =
             "Error loading the page";
-          const signUpBtn = document.createElement("button");
-          signUpBtn.innerText = "Sign Up";
-          signUpBtn.onclick = () => {
-            window.location.href = "https://marketplace.gohighlevel.com/oauth/chooselocation?response_type=code&redirect_uri=https://amidawealth.yourcxo.online/oauth&client_id=6627d4b347c303d111a6e7ec-lveo4ug8&scope=calendars.write%20calendars/events.write%20calendars/events.readonly%20calendars/groups.readonly%20calendars/groups.write%20calendars/resources.readonly%20calendars/resources.write%20calendars.readonly%20contacts.readonly%20contacts.write";
-          };
+          const signUpBtn = document.createElement("a");
+          signUpBtn.href = "https://marketplace.gohighlevel.com/oauth/chooselocation?response_type=code&redirect_uri=https://amidawealth.yourcxo.online/oauth&client_id=6627d4b347c303d111a6e7ec-lveo4ug8&scope=calendars.write%20calendars/events.write%20calendars/events.readonly%20calendars/groups.readonly%20calendars/groups.write%20calendars/resources.readonly%20calendars/resources.write%20calendars.readonly%20contacts.readonly%20contacts.write/";
+          signUpBtn.setAttribute("target", "_blank");
+          const buttonComp = document.createElement("button");
+          buttonComp.innerText = "Sign Up";
+          signUpBtn.appendChild(buttonComp);
+          const copyUrl = document.createElement("button");
+          copyUrl.classList.add("transparentButton");
+          const svgFile = document.createElement("img");
+          svgFile.src = "./copy.svg";
+          svgFile.style.width = "1rem";
+          svgFile.style.height = "1rem";
+          copyUrl.appendChild(svgFile);
+          
+          copyUrl.onclick = () => {
+            navigator.clipboard.writeText(
+              "https://marketplace.gohighlevel.com/oauth/chooselocation?response_type=code&redirect_uri=https://amidawealth.yourcxo.online/oauth&client_id=6627d4b347c303d111a6e7ec-lveo4ug8&scope=calendars.write%20calendars/events.write%20calendars/events.readonly%20calendars/groups.readonly%20calendars/groups.write%20calendars/resources.readonly%20calendars/resources.write%20calendars.readonly%20contacts.readonly%20contacts.write/"
+            );
+          }
+
            //add the button to the page
            document.getElementById("section-button").appendChild(signUpBtn);
+          document.getElementById("section-button").appendChild(copyUrl);
         }
       };
     </script>
@@ -139,9 +155,10 @@
       justify-content: center;
       align-items: center;
       margin-top: 1rem;
+      gap: 1rem;
     }
     button {
-      background-color: #009688;
+      background-color: #1379ff;
       color: white;
       border: none;
       border-radius: 0.25rem;
@@ -150,13 +167,22 @@
       cursor: pointer;
       transition: 0.3s all;
     }
+    button:hover {
+      background-color: #0a5fcb;
+    }
+
+    button:active {
+      background-color: #0a5fcb;
+    }
+
+
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
     }
     .event-button {
-      background-color: #009688;
+      background-color: #1379ff;
       color: white;
       border: none;
       border-radius: 0.25rem;
@@ -170,6 +196,7 @@
       align-items: center;
       gap: 2rem;
     }
+    
   </style>
   <body>
     <h1 id="fields-missing" style="display: none"></h1>

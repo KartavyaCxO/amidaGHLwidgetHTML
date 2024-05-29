@@ -2,9 +2,12 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
     <script
       type="text/javascript"
       src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"
@@ -45,7 +48,6 @@
       padding: 10px;
       border: 0px;
       border-bottom: 1px solid #ccc;
-      
     }
 
     select:focus {
@@ -63,10 +65,10 @@
     .next-btn {
       transform: translate(300%, 400px);
       padding: 5px 10px;
-      
+
       position: absolute;
       font-size: 1.2em;
-      background-color: #45835C;
+      background-color: #45835c;
       color: white;
       outline: none;
       border: 0px;
@@ -78,7 +80,7 @@
       color: white;
     }
     .next-btn:active {
-      background-color: #45835C;
+      background-color: #45835c;
       color: white;
     }
   </style>
@@ -98,8 +100,7 @@
     const handleSelectionChange = async () => {
       var selected = document.getElementById("tz-select").value;
       await sessionStorage.setItem("timezone", selected);
-      document.getElementById("def-tz").innerHTML = selected
-
+      document.getElementById("def-tz").innerHTML = selected;
     };
   </script>
   <body>
@@ -867,7 +868,6 @@
     <button onclick="handleNextBtn()" id="nextstep" class="next-btn">
       Next
     </button>
-   
   </body>
   <script>
     function getWeekNumber(date) {
@@ -1213,12 +1213,13 @@
         if (selection < today) {
           //check via timezones
           const tzoneRegion = sessionStorage.getItem("timezone");
-          const today = new Date(new Date().toLocaleString("en-US", { timeZone: tzoneRegion })).setHours(0, 0, 0, 0);
+          const today = new Date(
+            new Date().toLocaleString("en-US", { timeZone: tzoneRegion })
+          ).setHours(0, 0, 0, 0);
           console.log(today);
           if (selection < today) {
             return;
           }
-
         }
         /*  const today = new Day(this.date);
     let isPreviousDays = new Day(day) < today;
@@ -1288,12 +1289,22 @@
           el.addEventListener("click", (e) => this.selectDay(el, day));
           el.setAttribute("aria-label", day.format(this.format));
           // do not hover on previous day in reference to timezone
-          const tzn = sessionStorage.getItem("timezone");
-          const today = new Date(new Date().toLocaleString("en-US", { timeZone: tzn })).setHours(0, 0, 0, 0);
+          let tzn = sessionStorage.getItem("timezone");
+          const deviceTimezone =
+            Intl.DateTimeFormat().resolvedOptions().timeZone;
+          if (!tzn) {
+            tzn = deviceTimezone;
+          }
+          const today = new Date(
+            new Date().toLocaleString("en-US", { timeZone: tzn })
+          ).setHours(0, 0, 0, 0);
           let isPreviousDays = day.timestamp < today;
           if (isPreviousDays) {
-            el.setAttribute("aria-label", `previous ${day.format(this.format)}`);
-          } 
+            el.setAttribute(
+              "aria-label",
+              `previous ${day.format(this.format)}`
+            );
+          }
 
           if (day.monthNumber === this.calendar.month.number) {
             el.classList.add("current");
@@ -1523,14 +1534,14 @@
       console.log(tzoneRegion);
       //set new date
       const date = new Date();
-      const today = new Date(date.toLocaleString("en-US", { timeZone: tzoneRegion }));
+      const today = new Date(
+        date.toLocaleString("en-US", { timeZone: tzoneRegion })
+      );
       console.log(today);
       //select the date picker
       const datePicker = document.querySelector("date-picker");
       //set the date
       datePicker.setAttribute("date", today);
     });
-
-
   </script>
 </html>

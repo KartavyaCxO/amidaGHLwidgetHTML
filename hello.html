@@ -89,6 +89,8 @@
       window.location.href = "/timeslot.html";
     };
     window.onload = async () => {
+      await sessionStorage.removeItem("timezone");
+      await sessionStorage.removeItem("date");
       /* var tzone = Intl.DateTimeFormat().resolvedOptions().timeZone; */
       //tzone with region city and offset
       const sessionTz = await sessionStorage.getItem("timezone");

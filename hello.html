@@ -89,12 +89,13 @@
       window.location.href = "/timeslot.html";
     };
     window.onload = async () => {
-      await sessionStorage.removeItem("timezone");
-      await sessionStorage.removeItem("date");
+      //await sessionStorage.removeItem("date");
       /* var tzone = Intl.DateTimeFormat().resolvedOptions().timeZone; */
       //tzone with region city and offset
       const sessionTz = await sessionStorage.getItem("timezone");
-      var tzone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      var tzone = !sessionTz
+        ? Intl.DateTimeFormat().resolvedOptions().timeZone
+        : sessionTz;
       console.log(tzone);
       var gmt = new Date().toLocaleString("en-US", { timeZoneName: "short" });
       await sessionStorage.setItem("timezone", tzone);
@@ -1226,8 +1227,8 @@
           }
         }
         /*  const today = new Day(this.date);
-    let isPreviousDays = new Day(day) < today;
-    if(isPreviousDays) return; */
+      let isPreviousDays = new Day(day) < today;
+      if(isPreviousDays) return; */
 
         this.date = day;
         if (day.monthNumber !== this.calendar.month.number) {
@@ -1302,8 +1303,10 @@
           const today = new Date(
             new Date().toLocaleString("en-US", { timeZone: tzn })
           );
-          let isPreviousDays = day.timestamp < today;
-
+          const todayTimestamp = new Date(today).setHours(0, 0, 0, 0);
+          let isPreviousDays = day.timestamp < todayTimestamp;
+          console.log(today);
+          console.log(day.timestamp);
           if (isPreviousDays) {
             el.setAttribute(
               "aria-label",
@@ -1340,211 +1343,225 @@
 
       get style() {
         return `
-    :host {
-        position: relative;
-        font-family: sans-serif;
-    }
-    
-    .date-toggle {
-        padding: 8px 15px;
-        border: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background: none;
-        display:none;
-        color: #333;
-        border-radius: 6px;
-        font-weight: bold;
-        cursor: pointer;
-        text-transform: capitalize;
-    }
-    
-    .calendar-dropdown {
-        display: block;
-        width: 300px;
-        height: 300px;
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translate(-50%, 80px);
-        padding: 20px;
-        background: #fff;
-        border-radius: 5px;
-        
-    }
-    
-    .calendar-dropdown.top {
-        top: auto;
-        bottom: 100%;
-        transform: translate(-50%, -8px);
-    }
-    
-    .calendar-dropdown.left {
-        top: 50%;
-        left: 0;
-        transform: translate(calc(-8px + -100%), -50%);
-    }
-    
-    .calendar-dropdown.right {
-        top: 50%;
-        left: 100%;
-        transform: translate(8px, -50%);
-    }
-    
-    .calendar-dropdown.visible {
-        display: block;
-    }
-    
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 10px 0 30px;
-    }
-    
-    .header h4 {
-        margin: 0;
-        text-transform: capitalize;
-        font-size: 21px;
-        font-weight: bold;
-        font-family: "DM Serif Display", serif;
-  font-weight: 400;
-  font-style: italic;
+      :host {
+          position: relative;
+          font-family: sans-serif;
+      }
 
-    }
+      .date-toggle {
+          padding: 8px 15px;
+          border: none;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          appearance: none;
+          background: none;
+          display:none;
+          color: #333;
+          border-radius: 6px;
+          font-weight: bold;
+          cursor: pointer;
+          text-transform: capitalize;
+      }
 
-    .header h4:focus-visible {
-        outline: none;
+      .calendar-dropdown {
+          display: block;
+          width: 300px;
+          height: 300px;
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          transform: translate(-50%, 80px);
+          padding: 20px;
+          background: #fff;
+          border-radius: 5px;
 
-    }
-    
-    .header button {
-        padding: 0;
-        border: 8px solid transparent;
-        width: 0;
-        height: 0;
-        border-radius: 2px;
-        border-top-color: #163F35;
-        transform: rotate(90deg);
-        cursor: pointer;
-        background: none;
-        position: relative;
-    }
-    
-    .header button::after {
-        content: '';
-        display: block;
-        width: 25px;
-        height: 25px;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-    }
-    
-    .header button:last-of-type {
-        transform: rotate(-90deg);
-    }
-    
-    .week-days {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        grid-gap: 5px;
-        margin-bottom: 10px;
-    }
-    
-    .week-days span {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 10px;
-        text-transform: capitalize;
-    }
-    
-    .month-days {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        grid-gap: 10px;
-    }
-    
-    .month-day {
-        padding: 8px 8px;
-        background: #f5fff7;
-        color: #45835C;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 100%;
-        cursor: pointer;
-        border: none;
-        font-size: 15px;
-    }
-    
-    .month-day.current {
-        background: #f5fff7;
+      }
 
-    }
-    
-    .month-day.selected {
-        background: #45835C;
-        color: #ffffff;
+      .calendar-dropdown.top {
+          top: auto;
+          bottom: 100%;
+          transform: translate(-50%, -8px);
+      }
 
-    }
-    .month-day.selected:hover {
-        background: #163F35;
-        color: #ffffff;
+      .calendar-dropdown.left {
+          top: 50%;
+          left: 0;
+          transform: translate(calc(-8px + -100%), -50%);
+      }
 
-    }
-    .month-day:hover {
-        transition: background 0.3s;
-        background: #7db592;
-        color: white;
-    }
-    /* do not hover on previous days */
-    .month-day[aria-label*="previous"] {
-        pointer-events: none;
-        background: #f0f0f0;
-        color:black;
-    }
-    `;
+      .calendar-dropdown.right {
+          top: 50%;
+          left: 100%;
+          transform: translate(8px, -50%);
+      }
+
+      .calendar-dropdown.visible {
+          display: block;
+      }
+
+      .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin: 10px 0 30px;
+      }
+
+      .header h4 {
+          margin: 0;
+          text-transform: capitalize;
+          font-size: 21px;
+          font-weight: bold;
+          font-family: "DM Serif Display", serif;
+    font-weight: 400;
+    font-style: italic;
+
+      }
+
+      .header h4:focus-visible {
+          outline: none;
+
+      }
+
+      .header button {
+          padding: 0;
+          border: 8px solid transparent;
+          width: 0;
+          height: 0;
+          border-radius: 2px;
+          border-top-color: #163F35;
+          transform: rotate(90deg);
+          cursor: pointer;
+          background: none;
+          position: relative;
+      }
+
+      .header button::after {
+          content: '';
+          display: block;
+          width: 25px;
+          height: 25px;
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+      }
+
+      .header button:last-of-type {
+          transform: rotate(-90deg);
+      }
+
+      .week-days {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          grid-gap: 5px;
+          margin-bottom: 10px;
+      }
+
+      .week-days span {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 10px;
+          text-transform: capitalize;
+      }
+
+      .month-days {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          grid-gap: 10px;
+      }
+
+      .month-day {
+          padding: 8px 8px;
+          background: #f5fff7;
+          color: #45835C;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 100%;
+          cursor: pointer;
+          border: none;
+          font-size: 15px;
+      }
+
+      .month-day.current {
+          background: #f5fff7;
+
+      }
+
+      .month-day.selected {
+          background: #45835C;
+          color: #ffffff;
+
+      }
+      .month-day.selected:hover {
+          background: #163F35;
+          color: #ffffff;
+
+      }
+      .month-day:hover {
+          transition: background 0.3s;
+          background: #7db592;
+          color: white;
+      }
+      /* do not hover on previous days */
+      .month-day[aria-label*="previous"] {
+          pointer-events: none;
+          background: #f0f0f0;
+          color:black;
+      }
+      `;
       }
 
       render() {
         const monthYear = `${this.calendar.month.name}, ${this.calendar.year}`;
         const date = this.date.format(this.format);
         this.shadow.innerHTML = `
-    <style>${this.style}</style>
-    <button type="button" class="date-toggle">${date}</button>
-    <div class="calendar-dropdown ${this.visible ? "visible" : "visible"} ${
+      <style>${this.style}</style>
+      <button type="button" class="date-toggle">${date}</button>
+      <div class="calendar-dropdown ${this.visible ? "visible" : "visible"} ${
           this.position
         }">
-        <div class="header">
-            <button type="button" class="prev-month" aria-label="previous month"></button>
-            <h4 tabindex="0" aria-label="current month ${monthYear}">
-            ${monthYear}
-            </h4>
-            <button type="button" class="prev-month" aria-label="next month"></button>
-        </div>
-        <div class="week-days">${this.getWeekDaysElementStrings()}</div>
-        <div class="month-days"></div>
-    </div>
-    `;
+          <div class="header">
+              <button type="button" class="prev-month" aria-label="previous month"></button>
+              <h4 tabindex="0" aria-label="current month ${monthYear}">
+              ${monthYear}
+              </h4>
+              <button type="button" class="prev-month" aria-label="next month"></button>
+          </div>
+          <div class="week-days">${this.getWeekDaysElementStrings()}</div>
+          <div class="month-days"></div>
+      </div>
+      `;
       }
     }
 
     customElements.define("date-picker", DatePicker);
-
+    //select the timezone
     const tzoneElement = document.getElementById("tz-select");
+    //select the date picker
+    const datePicker = document.querySelector("date-picker");
+    //set the date in reference to the timezone
+    const tzoneRegion = sessionStorage.getItem("timezone");
+    const date = new Date();
+    const today = new Date(
+      date.toLocaleString("en-US", { timeZone: tzoneRegion })
+    );
+    const formattedDate = today.toLocaleDateString("en-US");
+    datePicker.setAttribute("date", today);
+    console.log(today);
+    sessionStorage.setItem("date", formattedDate);
     tzoneElement.addEventListener("change", (e) => {
       const tzoneRegion = e.target.value;
       console.log(tzoneRegion);
       //set new date
-      const date = new Date();
+      const date = sessionStorage.getItem("date")
+        ? sessionStorage.getItem("date")
+        : new Date();
       const today = new Date(
         date.toLocaleString("en-US", { timeZone: tzoneRegion })
       );
-      console.log(today);
+
       //change session storage date
       const formattedDate = today.toLocaleDateString("en-US");
       sessionStorage.setItem("date", formattedDate);

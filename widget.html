@@ -136,7 +136,11 @@
       font-family: "Roboto", sans-serif;
       color: #546e7a;
     }
+    p {
+      margin: 0;
+    }
     #requirement {
+      padding-bottom: 10px;
       font-family: "DM Serif Display", serif;
       font-size: 1.2rem;
       font-weight: 400;
@@ -207,7 +211,7 @@
       background-color: transparent;
       color: #45835c;
       border-radius: 0.25rem;
-      padding: 0.2rem 1rem;
+      padding: 0.5rem 0.5rem;
       font-size: 1rem;
       cursor: pointer;
       transition: 0.3s all;
@@ -215,7 +219,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 1rem;
+      gap: 15px;
     }
 
     .event-button:hover {
@@ -223,7 +227,6 @@
       background-color: #5c9571;
       color: white;
       border-radius: 0.25rem;
-      padding: 0.2rem 1rem;
       font-size: 1rem;
       cursor: pointer;
       transition: 0.3s all;
@@ -231,14 +234,13 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 1rem;
       #eventDuration {
         font-size: 0.75rem;
         font-weight: 400;
         display: block;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0rem;
         color: #ffffff;
-        padding: 0.5rem 0.75rem;
+        padding: 0rem 0.75rem;
       }
     }
 
@@ -246,9 +248,9 @@
       font-size: 0.75rem;
       font-weight: 400;
       display: block;
-      margin-bottom: 0.5rem;
-      color: #0b301a;
-      padding: 0.5rem 0.75rem;
+      margin-bottom: 0rem;
+      color: #616d66;
+      padding: 0rem 0.75rem;
     }
   </style>
   <body>
@@ -260,7 +262,6 @@
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        gap: 5vh;
       "
     >
       <p id="requirement">Loading ....</p>

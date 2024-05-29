@@ -1466,8 +1466,8 @@
     
     .month-day {
         padding: 8px 8px;
-        background: #d9ffe3;
-        color: black;
+        background: #f5fff7;
+        color: #45835C;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -1495,11 +1495,13 @@
     .month-day:hover {
         transition: background 0.3s;
         background: #7db592;
+        color: white;
     }
     /* do not hover on previous days */
     .month-day[aria-label*="previous"] {
         pointer-events: none;
         background: #f0f0f0;
+        color:black;
     }
     `;
       }

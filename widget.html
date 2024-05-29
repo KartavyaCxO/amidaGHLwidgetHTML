@@ -2,9 +2,12 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://live.zwidgets.com/js-sdk/1.1/ZohoEmbededAppSDK.min.js"></script>
     <script
       type="text/javascript"
@@ -78,7 +81,7 @@
                 button.innerText = calendar.name;
                 button.classList.add("event-button");
                 const eventDuration = document.createElement("span");
-                eventDuration.setAttribute("id", "eventDuration")
+                eventDuration.setAttribute("id", "eventDuration");
                 eventDuration.innerText = `Event Duration: ${calendar.slotDuration} minutes`;
                 button.appendChild(eventDuration);
 
@@ -96,7 +99,8 @@
           document.getElementById("requirement").innerText =
             "Error loading the page";
           const signUpBtn = document.createElement("a");
-          signUpBtn.href = "https://marketplace.gohighlevel.com/oauth/chooselocation?response_type=code&redirect_uri=https://amidawealth.yourcxo.online/oauth&client_id=6627d4b347c303d111a6e7ec-lveo4ug8&scope=calendars.write%20calendars/events.write%20calendars/events.readonly%20calendars/groups.readonly%20calendars/groups.write%20calendars/resources.readonly%20calendars/resources.write%20calendars.readonly%20contacts.readonly%20contacts.write";
+          signUpBtn.href =
+            "https://marketplace.gohighlevel.com/oauth/chooselocation?response_type=code&redirect_uri=https://amidawealth.yourcxo.online/oauth&client_id=6627d4b347c303d111a6e7ec-lveo4ug8&scope=calendars.write%20calendars/events.write%20calendars/events.readonly%20calendars/groups.readonly%20calendars/groups.write%20calendars/resources.readonly%20calendars/resources.write%20calendars.readonly%20contacts.readonly%20contacts.write";
           signUpBtn.setAttribute("target", "_blank");
           const buttonComp = document.createElement("button");
           buttonComp.innerText = "Sign Up";
@@ -108,15 +112,15 @@
           svgFile.style.width = "1rem";
           svgFile.style.height = "1rem";
           copyUrl.appendChild(svgFile);
-          
+
           copyUrl.onclick = () => {
             navigator.clipboard.writeText(
               "https://marketplace.gohighlevel.com/oauth/chooselocation?response_type=code&redirect_uri=https://amidawealth.yourcxo.online/oauth&client_id=6627d4b347c303d111a6e7ec-lveo4ug8&scope=calendars.write%20calendars/events.write%20calendars/events.readonly%20calendars/groups.readonly%20calendars/groups.write%20calendars/resources.readonly%20calendars/resources.write%20calendars.readonly%20contacts.readonly%20contacts.write"
             );
-          }
+          };
 
-           //add the button to the page
-           document.getElementById("section-button").appendChild(signUpBtn);
+          //add the button to the page
+          document.getElementById("section-button").appendChild(signUpBtn);
           document.getElementById("section-button").appendChild(copyUrl);
         }
       };
@@ -141,10 +145,10 @@
 
     #authenticate {
       font-family: "DM Serif Display", serif;
-  font-weight: 200;
-  color: #182f20;
-  font-size: 1.3rem;
-  letter-spacing: 0.1rem;
+      font-weight: 200;
+      color: #182f20;
+      font-size: 1.3rem;
+      letter-spacing: 0.1rem;
     }
     #form1 {
       display: flex;
@@ -176,7 +180,7 @@
       gap: 1rem;
     }
     button {
-      background-color: #45835C;
+      background-color: #45835c;
       color: white;
       border: none;
       border-radius: 0.25rem;
@@ -186,13 +190,12 @@
       transition: 0.3s all;
     }
     button:hover {
-      background-color: #163F35;
+      background-color: #163f35;
     }
 
     button:active {
-      background-color: #163F35;
+      background-color: #163f35;
     }
-
 
     .grid-2 {
       display: grid;
@@ -200,9 +203,9 @@
       gap: 1rem;
     }
     .event-button {
-      border: #45835C 0.7px solid;
+      border: #45835c 0.7px solid;
       background-color: transparent;
-      color: #45835C;
+      color: #45835c;
       border-radius: 0.25rem;
       padding: 0.2rem 1rem;
       font-size: 1rem;
@@ -216,14 +219,14 @@
     }
 
     .event-button:hover {
-      border: #45835C 0.7px solid;
+      border: #45835c 0.7px solid;
       background-color: #5c9571;
       color: white;
       border-radius: 0.25rem;
       padding: 0.2rem 1rem;
       font-size: 1rem;
       cursor: pointer;
-      transition: 0.3s all; 
+      transition: 0.3s all;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -236,7 +239,6 @@
         margin-bottom: 0.5rem;
         color: #ffffff;
         padding: 0.5rem 0.75rem;
-     
       }
     }
 
@@ -248,7 +250,6 @@
       color: #0b301a;
       padding: 0.5rem 0.75rem;
     }
-    
   </style>
   <body>
     <h1 id="fields-missing" style="display: none"></h1>
@@ -262,7 +263,6 @@
         gap: 5vh;
       "
     >
-      <span id="authenticate" style="font-weight: 700;">Amida Wealth Appointment Bookings</span>
       <p id="requirement">Loading ....</p>
       <div id="calendarContainer" class="grid-2"></div>
       <div id="section-button"></div>

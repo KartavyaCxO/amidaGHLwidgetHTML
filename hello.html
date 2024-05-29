@@ -1541,6 +1541,9 @@
         date.toLocaleString("en-US", { timeZone: tzoneRegion })
       );
       console.log(today);
+      //change session storage date
+      const formattedDate = today.toLocaleDateString("en-US");
+      sessionStorage.setItem("date", formattedDate);
       //select the date picker
       const datePicker = document.querySelector("date-picker");
       //set the date

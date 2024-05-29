@@ -1299,6 +1299,7 @@
             new Date().toLocaleString("en-US", { timeZone: tzn })
           ).setHours(0, 0, 0, 0);
           let isPreviousDays = day.timestamp < today;
+
           if (isPreviousDays) {
             el.setAttribute(
               "aria-label",

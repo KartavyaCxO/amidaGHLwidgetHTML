@@ -75,7 +75,7 @@
             .then(async (response) => {
               res = await response.data.data.calendars;
               document.querySelector("#requirement").innerText =
-                "Select a calendar to continue";
+                "Select an event to continue";
               await res.map((calendar) => {
                 const button = document.createElement("button");
                 button.innerText = calendar.name;
@@ -144,7 +144,7 @@
       font-family: "DM Serif Display", serif;
       font-size: 1.2rem;
       font-weight: 400;
-      color: #182f20;
+      color: #384d3f;
     }
 
     #authenticate {

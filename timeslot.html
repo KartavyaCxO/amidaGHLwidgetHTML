@@ -168,17 +168,17 @@
       //selected date = M/D/YYYY and timezone continent/city
       //object key value year month day
       console.log("selectedDate", selectedDate);
-      const day = selectedDate.split("-")[1];
-      const month = selectedDate.split("-")[0];
-      const year = selectedDate.split("-")[2];
-      const YYYYMMDD = `${year}-${month}-${day}`;
-
-      console.log("YYYYMMDD", YYYYMMDD);
-      const MonthDayYearString = new Date(selectedDate).toDateString();
-      const MonthDayYear = MonthDayYearString.split(" ").slice(1).join(" ");
-      console.log("MonthDayYear", MonthDayYear);
 
       try {
+        const day = selectedDate.split("-")[1];
+        const month = selectedDate.split("-")[0];
+        const year = selectedDate.split("-")[2];
+        const YYYYMMDD = `${year}-${month}-${day}`;
+
+        console.log("YYYYMMDD", YYYYMMDD);
+        const MonthDayYearString = new Date(selectedDate).toDateString();
+        const MonthDayYear = MonthDayYearString.split(" ").slice(1).join(" ");
+        console.log("MonthDayYear", MonthDayYear);
         await axios
           .get("https://amidawealth.yourcxo.online/freeslots", {
             params: {

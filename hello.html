@@ -2,6 +2,9 @@
 <html>
   <head>
     <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <script
       type="text/javascript"
       src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"
@@ -37,12 +40,16 @@
 
     /*Select Element style*/
     select {
+      margin-top: 40px;
       width: 400px;
       padding: 10px;
-      margin: 5px 0;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-sizing: border-box;
+      border: 0px;
+      border-bottom: 1px solid #ccc;
+      
+    }
+
+    select:focus {
+      outline: none;
     }
     /* change options padding and margin */
     select option {
@@ -54,19 +61,20 @@
       font-family: Arial, sans-serif;
     }
     .next-btn {
-      transform: translate(300%, 420px);
-      padding: 5px 15px;
+      transform: translate(300%, 400px);
+      padding: 5px 10px;
+      
       position: absolute;
-      font-size: 1em;
+      font-size: 1.2em;
       background-color: #45835C;
       color: white;
       outline: none;
       border: 0px;
-      border-radius: 25px;
+      border-radius: 8px;
     }
     .next-btn:hover {
       cursor: pointer;
-      background-color: #45835C;
+      background-color: #335f43;
       color: white;
     }
     .next-btn:active {
@@ -90,7 +98,8 @@
     const handleSelectionChange = async () => {
       var selected = document.getElementById("tz-select").value;
       await sessionStorage.setItem("timezone", selected);
-      document.getElementById("def-tz").innerHTML = selected;
+      document.getElementById("def-tz").innerHTML = selected
+
     };
   </script>
   <body>
@@ -105,7 +114,6 @@
       <date-picker format="MMMM DD (DDD), YYYY"> </date-picker>
     </div>
     <div style="display: flex; flex-direction: column">
-      <label for="tzselect">TIMEZONE</label>
       <select onchange="handleSelectionChange()" name="tzselect" id="tz-select">
         <option value="default" id="def-tz"></option>
         <option value="Africa/Abidjan">Africa/Abidjan GMT+0:00</option>
@@ -859,6 +867,7 @@
     <button onclick="handleNextBtn()" id="nextstep" class="next-btn">
       Next
     </button>
+   
   </body>
   <script>
     function getWeekNumber(date) {
@@ -1060,6 +1069,7 @@
         super();
 
         const tzoneRegion = sessionStorage.getItem("timezone");
+
         const lang = window.navigator.language;
         const date = new Date(
           this.date ?? (this.getAttribute("date") || Date.now())
@@ -1200,7 +1210,16 @@
         //today with no time
         const today = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
         console.log(today);
-        if (selection < today) return;
+        if (selection < today) {
+          //check via timezones
+          const tzoneRegion = sessionStorage.getItem("timezone");
+          const today = new Date(new Date().toLocaleString("en-US", { timeZone: tzoneRegion })).setHours(0, 0, 0, 0);
+          console.log(today);
+          if (selection < today) {
+            return;
+          }
+
+        }
         /*  const today = new Day(this.date);
     let isPreviousDays = new Day(day) < today;
     if(isPreviousDays) return; */
@@ -1268,6 +1287,13 @@
           el.textContent = day.date;
           el.addEventListener("click", (e) => this.selectDay(el, day));
           el.setAttribute("aria-label", day.format(this.format));
+          // do not hover on previous day in reference to timezone
+          const tzn = sessionStorage.getItem("timezone");
+          const today = new Date(new Date().toLocaleString("en-US", { timeZone: tzn })).setHours(0, 0, 0, 0);
+          let isPreviousDays = day.timestamp < today;
+          if (isPreviousDays) {
+            el.setAttribute("aria-label", `previous ${day.format(this.format)}`);
+          } 
 
           if (day.monthNumber === this.calendar.month.number) {
             el.classList.add("current");
@@ -1310,7 +1336,7 @@
         -moz-appearance: none;
         appearance: none;
         background: none;
-        outline:1px solid black;
+        display:none;
         color: #333;
         border-radius: 6px;
         font-weight: bold;
@@ -1329,7 +1355,7 @@
         padding: 20px;
         background: #fff;
         border-radius: 5px;
-        box-shadow: 0 0 8px rgba(0,0,0,0.2);
+        
     }
     
     .calendar-dropdown.top {
@@ -1366,6 +1392,9 @@
         text-transform: capitalize;
         font-size: 21px;
         font-weight: bold;
+        font-family: "DM Serif Display", serif;
+  font-weight: 400;
+  font-style: italic;
 
     }
 
@@ -1425,7 +1454,7 @@
     
     .month-day {
         padding: 8px 8px;
-        background: lightgray;
+        background: #fb fbfb;
         color: black;
         display: flex;
         justify-content: center;
@@ -1453,8 +1482,12 @@
     }
     .month-day:hover {
         transition: background 0.3s;
-        background: lightgray;
-
+        background: #7db592;
+    }
+    /* do not hover on previous days */
+    .month-day[aria-label*="previous"] {
+        pointer-events: none;
+        background: #f0f0f0;
     }
     `;
       }
@@ -1483,5 +1516,21 @@
     }
 
     customElements.define("date-picker", DatePicker);
+
+    const tzoneElement = document.getElementById("tz-select");
+    tzoneElement.addEventListener("change", (e) => {
+      const tzoneRegion = e.target.value;
+      console.log(tzoneRegion);
+      //set new date
+      const date = new Date();
+      const today = new Date(date.toLocaleString("en-US", { timeZone: tzoneRegion }));
+      console.log(today);
+      //select the date picker
+      const datePicker = document.querySelector("date-picker");
+      //set the date
+      datePicker.setAttribute("date", today);
+    });
+
+
   </script>
 </html>

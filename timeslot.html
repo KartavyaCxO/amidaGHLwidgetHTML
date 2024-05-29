@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <title>Document</title>
     <script src="https://live.zwidgets.com/js-sdk/1.1/ZohoEmbededAppSDK.min.js"></script>
     <script
@@ -25,9 +29,9 @@
     ></script>
     <style>
       .slot-btn {
-        background-color: #aeaeae;
-        border: none;
-        color: white;
+        background-color: white;
+        border: 1px solid #45835C;
+        color: #203b2a;
         padding: 15px 32px;
         text-align: center;
         text-decoration: none;
@@ -35,12 +39,15 @@
         font-size: 16px;
         margin: 4px 2px;
         cursor: pointer;
+        border-radius: 8px;
       }
       .slot-btn:hover {
         background-color: #45835C;
+        color: white;
       }
       .slot-btn:active {
         background-color: #45835C;
+        color: white;
         box-shadow: 0 2px #666;
         transform: translateY(1px);
       }
@@ -66,7 +73,9 @@
         grid-column: 1 / -1;
         /*align center */
         text-align: center;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: "DM Serif Display", serif;
+  font-weight: 400;
+  font-style: italic;
         color: #333;
         padding-bottom: 20px;
       }
@@ -116,13 +125,33 @@
         border-radius: 8px;
       }
       #confirm:hover {
-        background-color: #163F35;
+        background-color: #335f43;
       }
       #confirm:active {
         background-color: #163F35;
         box-shadow: 0 5px #666;
         transform: translateY(2px);
       }
+      #confirm:disabled {
+        background-color: #618e71;
+        color: black;
+        cursor: not-allowed;
+      }
+      .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border-left-color: #333;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
     </style>
   </head>
   <script>
@@ -138,6 +167,10 @@
         .toLocaleDateString("en-CA")
         .toString();
       console.log("YYYYMMDD", YYYYMMDD);
+      const MonthDayYearString = new Date(selectedDate).toDateString();
+      const MonthDayYear = MonthDayYearString.split(" ").slice(1).join(" ");
+      console.log("MonthDayYear", MonthDayYear);
+
       try {
         await axios
           .get("https://amidawealth.yourcxo.online/freeslots", {
@@ -150,7 +183,7 @@
           })
           .then(async (response) => {
             const infoElement = document.getElementById("info");
-            infoElement.innerHTML = `Select a slot for ${selectedDate}`;
+            infoElement.innerHTML = `Select a slot for ${MonthDayYear}`;
             /* console.log("TIME SLOTS",await response.data.data[YYYYMMDD].slots); */
             if (response.data.data[YYYYMMDD] === undefined) {
               document.getElementById("info").innerHTML =
@@ -185,16 +218,19 @@
                     sessionStorage.setItem("slot", slots[slot]);
                     const slotButtons = document.querySelectorAll(".slot-btn");
                     slotButtons.forEach((slotButton) => {
-                      slotButton.style.backgroundColor = "#aeaeae";
+                      slotButton.style.backgroundColor = "white";
+                      slotButton.style.color = "black";
                     });
                     //set selected slot to blue
-                    slotBtn.style.backgroundColor = "#163F35";
+                    slotBtn.style.backgroundColor = "#335f43";
+                    slotBtn.style.color = "white";
                     //enable confirm button
                     document.getElementById("confirm").disabled = false;
                   };
                   const properTime = slots[slot].split("T")[1].split("-")[0];
                   const justTime =
                     properTime.split(":")[0] + ":" + properTime.split(":")[1];
+
                   slotBtn.innerHTML = justTime;
                   slotBtn.classList.add("slot-btn");
                   slotElement.appendChild(slotBtn);
@@ -213,6 +249,21 @@
         confirmBtn.onclick = async () => {
           //disable confirm button
           confirmBtn.disabled = true;
+          const loader = document.getElementById("loader");
+          //spinner
+          const spinner = document.createElement("div");
+          spinner.classList.add("spinner");
+          loader.appendChild(spinner);
+          //absolute position center
+          loader.style.display = "block";
+          loader.style.position = "absolute";
+          loader.style.top = "50%";
+          loader.style.left = "50%";
+          loader.style.transform = "translate(-50%, -50%)";
+
+
+
+
           const slot = sessionStorage.getItem("slot");
           const selectedCalendar = sessionStorage.getItem("calendar");
           const firstName = sessionStorage.getItem("firstName");
@@ -235,7 +286,7 @@
               .then(async (response) => {
                 const res = await response.data;
                 console.log("RES: ", res.data);
-
+                loader.style.display = "none";
                 if (res.data.id) {
                   console.log("Booking successful");
                   const modal = document.createElement("div");
@@ -261,6 +312,9 @@
                 return res;
               });
           } catch (error) {
+            //remove spinner and hide loader
+            loader.style.display = "none";
+            loader.removeChild(spinner);  
             console.log("Second Error", error);
             //enable confirm button
             confirmBtn.disabled = false;
@@ -296,6 +350,8 @@
         <li id="info">Loading...</li>
       </ul>
       <button id="confirm" disabled>Confirm</button>
+      <div id="loader" style="display:none;">
+      </div>
     </main>
   </body>
 </html>

@@ -1211,10 +1211,8 @@
       selectDay(el, day) {
         if (day.isEqualTo(this.date)) return;
         const selection = new Date(day.Date).getTime();
-        console.log(selection);
         //today with no time
         const today = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
-        console.log(today);
         if (selection < today) {
           //check via timezones
           const tzoneRegion = sessionStorage.getItem("timezone");
@@ -1305,8 +1303,6 @@
           );
           const todayTimestamp = new Date(today).setHours(0, 0, 0, 0);
           let isPreviousDays = day.timestamp < todayTimestamp;
-          console.log(today);
-          console.log(day.timestamp);
           if (isPreviousDays) {
             el.setAttribute(
               "aria-label",
@@ -1558,17 +1554,33 @@
       const date = sessionStorage.getItem("date")
         ? sessionStorage.getItem("date")
         : new Date();
-      const today = new Date(
+
+      let selected = new Date(
         date.toLocaleString("en-US", { timeZone: tzoneRegion })
       );
-
+      //check if the selected date is less than today
+      const today = new Date(
+        new Date().toLocaleString("en-US", { timeZone: tzoneRegion })
+      );
+      const todayTimestamp = new Date(today).setHours(0, 0, 0, 0);
+      let isPreviousDays = selected.getTime() < todayTimestamp;
+      if (isPreviousDays) {
+        //set the date to today
+        console.log(
+          "changing the date to today as it prev selection is less than today"
+        );
+        const today = new Date(
+          new Date().toLocaleString("en-US", { timeZone: tzoneRegion })
+        );
+        selected = today;
+      }
       //change session storage date
-      const formattedDate = today.toLocaleDateString("en-US");
+      const formattedDate = selected.toLocaleDateString("en-US");
       sessionStorage.setItem("date", formattedDate);
       //select the date picker
       const datePicker = document.querySelector("date-picker");
       //set the date
-      datePicker.setAttribute("date", today);
+      datePicker.setAttribute("date", selected);
     });
   </script>
 </html>

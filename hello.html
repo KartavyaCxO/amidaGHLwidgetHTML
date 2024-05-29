@@ -92,10 +92,7 @@
       /* var tzone = Intl.DateTimeFormat().resolvedOptions().timeZone; */
       //tzone with region city and offset
       const sessionTz = await sessionStorage.getItem("timezone");
-      var tzone =
-        sessionTz !== undefined || sessionTz !== null
-          ? sessionTz
-          : Intl.DateTimeFormat().resolvedOptions().timeZone;
+      var tzone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       console.log(tzone);
       var gmt = new Date().toLocaleString("en-US", { timeZoneName: "short" });
       await sessionStorage.setItem("timezone", tzone);

@@ -91,7 +91,12 @@
     window.onload = async () => {
       /* var tzone = Intl.DateTimeFormat().resolvedOptions().timeZone; */
       //tzone with region city and offset
-      var tzone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const sessionTz = await sessionStorage.getItem("timezone");
+      var tzone =
+        sessionTz !== undefined || sessionTz !== null
+          ? sessionTz
+          : Intl.DateTimeFormat().resolvedOptions().timeZone;
+      console.log(tzone);
       var gmt = new Date().toLocaleString("en-US", { timeZoneName: "short" });
       await sessionStorage.setItem("timezone", tzone);
       document.getElementById("def-tz").innerHTML = tzone + " " + gmt;
@@ -1297,7 +1302,7 @@
           }
           const today = new Date(
             new Date().toLocaleString("en-US", { timeZone: tzn })
-          ).setHours(0, 0, 0, 0);
+          );
           let isPreviousDays = day.timestamp < today;
 
           if (isPreviousDays) {

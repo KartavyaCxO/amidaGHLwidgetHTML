@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
     <title>Document</title>
     <script src="https://live.zwidgets.com/js-sdk/1.1/ZohoEmbededAppSDK.min.js"></script>
     <script
@@ -30,7 +33,7 @@
     <style>
       .slot-btn {
         background-color: white;
-        border: 1px solid #45835C;
+        border: 1px solid #45835c;
         color: #203b2a;
         padding: 15px 32px;
         text-align: center;
@@ -42,11 +45,11 @@
         border-radius: 8px;
       }
       .slot-btn:hover {
-        background-color: #45835C;
+        background-color: #45835c;
         color: white;
       }
       .slot-btn:active {
-        background-color: #45835C;
+        background-color: #45835c;
         color: white;
         box-shadow: 0 2px #666;
         transform: translateY(1px);
@@ -74,8 +77,8 @@
         /*align center */
         text-align: center;
         font-family: "DM Serif Display", serif;
-  font-weight: 400;
-  font-style: italic;
+        font-weight: 400;
+        font-style: italic;
         color: #333;
         padding-bottom: 20px;
       }
@@ -112,7 +115,7 @@
         cursor: pointer;
       }
       #confirm {
-        background-color: #45835C;
+        background-color: #45835c;
         border: none;
         color: white;
         padding: 15px 32px;
@@ -128,7 +131,7 @@
         background-color: #335f43;
       }
       #confirm:active {
-        background-color: #163F35;
+        background-color: #163f35;
         box-shadow: 0 5px #666;
         transform: translateY(2px);
       }
@@ -151,7 +154,6 @@
           transform: rotate(360deg);
         }
       }
-
     </style>
   </head>
   <script>
@@ -163,9 +165,7 @@
       const date = new Date(selectedDate);
       const startTimeInMs = date.getTime();
       const endTimeInMs = startTimeInMs + 86400000;
-      const YYYYMMDD = new Date(selectedDate)
-        .toLocaleDateString("en-CA")
-        .toString();
+      const YYYYMMDD = new Date(selectedDate).toISOString().split("T")[0];
       console.log("YYYYMMDD", YYYYMMDD);
       const MonthDayYearString = new Date(selectedDate).toDateString();
       const MonthDayYear = MonthDayYearString.split(" ").slice(1).join(" ");
@@ -185,11 +185,79 @@
             const infoElement = document.getElementById("info");
             infoElement.innerHTML = `Select a slot for ${MonthDayYear}`;
             /* console.log("TIME SLOTS",await response.data.data[YYYYMMDD].slots); */
-            if (response.data.data[YYYYMMDD] === undefined) {
-              document.getElementById("info").innerHTML =
+
+            if (response.data && response.data.data) {
+              if (response.data.data[YYYYMMDD] === undefined) {
+                // Handle no slots case
+                document.getElementById("info").innerHTML =
+                  "No slots available for the selected date";
+                const confirmBtn = document.getElementById("confirm"); //enable back to calendar button
+                confirmBtn.removeAttribute("disabled");
+                confirmBtn.removeEventListener("click", confirmBtn.onclick);
+                confirmBtn.innerHTML = "Back to calendar";
+                confirmBtn.addEventListener("click", () => {
+                  try {
+                    const backUrl = `/hello.html?calendar=${selectedCalendar}`;
+                    window.location.href = backUrl;
+                  } catch (error) {
+                    console.log(error);
+                  }
+                });
+
+                return;
+              }
+              const slots = await response.data.data[YYYYMMDD].slots;
+              console.log("SLOTS", slots);
+              //get slots object length
+              const slotsLength = Object.keys(slots).length;
+
+              if (slotsLength !== 0) {
+                for (const slot in slots) {
+                  if (Object.hasOwnProperty.call(slots, slot)) {
+                    const slotElement = document.createElement("li");
+                    const slotBtn = document.createElement("button");
+                    slotBtn.onclick = () => {
+                      sessionStorage.setItem("slot", slots[slot]);
+                      const slotButtons =
+                        document.querySelectorAll(".slot-btn");
+                      slotButtons.forEach((slotButton) => {
+                        slotButton.style.backgroundColor = "white";
+                        slotButton.style.color = "black";
+                      });
+                      //set selected slot to blue
+                      slotBtn.style.backgroundColor = "#335f43";
+                      slotBtn.style.color = "white";
+                      //enable confirm button
+                      document.getElementById("confirm").disabled = false;
+                    };
+                    const properTime = slots[slot].split("T")[1].split("-")[0];
+                    const justTime =
+                      properTime.split(":")[0] + ":" + properTime.split(":")[1];
+
+                    slotBtn.innerHTML = justTime;
+                    slotBtn.classList.add("slot-btn");
+                    slotElement.appendChild(slotBtn);
+                    document.getElementById("slots").appendChild(slotElement);
+                  }
+                }
+              } else {
+                const slotElement = document.createElement("p");
+                slotElement.innerHTML =
+                  "No slots available for the selected date";
+                document.getElementById("slots").appendChild(slotElement);
+              }
+            } else {
+              const slotElement = document.createElement("p");
+              slotElement.innerHTML =
                 "No slots available for the selected date";
-              const confirmBtn = document.getElementById("confirm");
-              //enable back to calendar button
+              document.getElementById("slots").appendChild(slotElement);
+              //remove grid display
+              document.getElementById("slots").style.display = "block";
+
+              slotElement.style.textAlign = "center";
+              slotElement.style.fontSize = "1.5em";
+              slotElement.style.fontFamily = "DM Serif Display";
+              const confirmBtn = document.getElementById("confirm"); //enable back to calendar button
               confirmBtn.removeAttribute("disabled");
               confirmBtn.removeEventListener("click", confirmBtn.onclick);
               confirmBtn.innerHTML = "Back to calendar";
@@ -201,47 +269,6 @@
                   console.log(error);
                 }
               });
-
-              return;
-            }
-            const slots = await response.data.data[YYYYMMDD].slots;
-            console.log("SLOTS", slots);
-            //get slots object length
-            const slotsLength = Object.keys(slots).length;
-
-            if (slotsLength !== 0) {
-              for (const slot in slots) {
-                if (Object.hasOwnProperty.call(slots, slot)) {
-                  const slotElement = document.createElement("li");
-                  const slotBtn = document.createElement("button");
-                  slotBtn.onclick = () => {
-                    sessionStorage.setItem("slot", slots[slot]);
-                    const slotButtons = document.querySelectorAll(".slot-btn");
-                    slotButtons.forEach((slotButton) => {
-                      slotButton.style.backgroundColor = "white";
-                      slotButton.style.color = "black";
-                    });
-                    //set selected slot to blue
-                    slotBtn.style.backgroundColor = "#335f43";
-                    slotBtn.style.color = "white";
-                    //enable confirm button
-                    document.getElementById("confirm").disabled = false;
-                  };
-                  const properTime = slots[slot].split("T")[1].split("-")[0];
-                  const justTime =
-                    properTime.split(":")[0] + ":" + properTime.split(":")[1];
-
-                  slotBtn.innerHTML = justTime;
-                  slotBtn.classList.add("slot-btn");
-                  slotElement.appendChild(slotBtn);
-                  document.getElementById("slots").appendChild(slotElement);
-                }
-              }
-            } else {
-              const slotElement = document.createElement("p");
-              slotElement.innerHTML =
-                "No slots available for the selected date";
-              document.getElementById("slots").appendChild(slotElement);
             }
           });
 
@@ -260,9 +287,6 @@
           loader.style.top = "50%";
           loader.style.left = "50%";
           loader.style.transform = "translate(-50%, -50%)";
-
-
-
 
           const slot = sessionStorage.getItem("slot");
           const selectedCalendar = sessionStorage.getItem("calendar");
@@ -314,7 +338,7 @@
           } catch (error) {
             //remove spinner and hide loader
             loader.style.display = "none";
-            loader.removeChild(spinner);  
+            loader.removeChild(spinner);
             console.log("Second Error", error);
             //enable confirm button
             confirmBtn.disabled = false;
@@ -350,8 +374,7 @@
         <li id="info">Loading...</li>
       </ul>
       <button id="confirm" disabled>Confirm</button>
-      <div id="loader" style="display:none;">
-      </div>
+      <div id="loader" style="display: none"></div>
     </main>
   </body>
 </html>

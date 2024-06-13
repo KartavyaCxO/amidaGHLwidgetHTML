@@ -93,6 +93,19 @@
                   .getElementById("calendarContainer")
                   .appendChild(button);
               });
+              const onSiteButton = document.createElement("button");
+              onSiteButton.innerText = "Create On Site Event";
+              onSiteButton.classList.add("event-button");
+              onSiteButton.onclick = async () => {
+                await sessionStorage.setItem(
+                  "calendar",
+                  "KjllYmPcO7r9uCGsWW9O"
+                );
+                window.location.href = `/onsite.html?calendar=KjllYmPcO7r9uCGsWW9O`;
+              };
+              document
+                .getElementById("calendarContainer")
+                .appendChild(onSiteButton);
             });
         } catch (err) {
           console.log(err);

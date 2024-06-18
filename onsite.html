@@ -204,6 +204,27 @@
         outline: none;
         border: 1px solid #45835c;
       }
+      select {
+      width: 400px;
+      padding: 0 10px;
+      border: 0px;
+      border-bottom: 1px solid #ccc;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    option {
+      font-size: medium;
+    }
+
+   
+    select:focus {
+      outline: none;
+    }
+    /* change options padding and margin */
+    select option {
+      padding: 10px;
+      margin: 5px 0;
+    }
     </style>
   </head>
   <script>
@@ -216,6 +237,8 @@
         document.getElementById("1hr").style.color = "#203b2a";
         document.getElementById("2hr").style.backgroundColor = "white";
         document.getElementById("2hr").style.color = "#203b2a";
+        document.getElementById("1hr30min").style.backgroundColor = "white";
+        document.getElementById("1hr30min").style.color = "#203b2a";
       } else if (duration === 1) {
         document.getElementById("1hr").style.backgroundColor = "#45835c";
         document.getElementById("1hr").style.color = "white";
@@ -223,16 +246,39 @@
         document.getElementById("30min").style.color = "#203b2a";
         document.getElementById("2hr").style.backgroundColor = "white";
         document.getElementById("2hr").style.color = "#203b2a";
-      } else if (duration === 2) {
+        document.getElementById("1hr30min").style.backgroundColor = "white";
+        document.getElementById("1hr30min").style.color = "#203b2a";
+      }
+      else if(duration === 1.5) {
+        document.getElementById("1hr30min").style.backgroundColor = "#45835c";
+        document.getElementById("1hr30min").style.color = "white";
+        document.getElementById("30min").style.backgroundColor = "white";
+        document.getElementById("30min").style.color = "#203b2a";
+        document.getElementById("1hr").style.backgroundColor = "white";
+        document.getElementById("1hr").style.color = "#203b2a";
+        document.getElementById("2hr").style.backgroundColor = "white";
+        document.getElementById("2hr").style.color = "#203b2a";
+
+      } 
+      else if (duration === 2) {
         document.getElementById("2hr").style.backgroundColor = "#45835c";
         document.getElementById("2hr").style.color = "white";
         document.getElementById("30min").style.backgroundColor = "white";
         document.getElementById("30min").style.color = "#203b2a";
         document.getElementById("1hr").style.backgroundColor = "white";
         document.getElementById("1hr").style.color = "#203b2a";
+        document.getElementById("1hr30min").style.backgroundColor = "white";
+        document.getElementById("1hr30min").style.color = "#203b2a";
       }
     };
     window.onload = async () => {
+      if(document.getElementById("tz-select").value === "Custom") {
+        document.getElementById("name").hidden = false;
+        document.getElementById("label_custom").style.display = "block";
+      } else {
+        document.getElementById("name").hidden = true;
+        document.getElementById("label_custom").style.display = "none";
+      }
       const nextBtn = document.getElementById("next");
 
       showEmptyFieldsError = (msg) => {
@@ -262,6 +308,24 @@
         window.location.href = `/onsitedates.html?calendar=${calendar}`;
       });
     };
+    const handleSelectionChange = async () => {
+      const select = document.getElementById("tz-select");
+      const selectedValue = select.options[select.selectedIndex].value;
+      if(selectedValue === "Custom") {
+        document.getElementById("name").hidden = false;
+        await sessionStorage.removeItem("title");
+        document.getElementById("label_custom").style.display = "block";
+        document.getElementById("name").value = "";
+
+      } else {
+        document.getElementById("name").hidden = true;
+        document.getElementById("label_custom").style.display = "none";
+        document.getElementById("name").value = selectedValue;
+        await sessionStorage.setItem("title", selectedValue);
+
+
+      }
+    };
   </script>
   <body>
     <main>
@@ -276,7 +340,28 @@
           margin-bottom: 20px;
         "
       >
-        <label for="name">Event Name</label>
+      <label for="eventnameselect">Event Name</label>
+        <select name="eventnameselect" onchange="handleSelectionChange()" name="tzselect" id="tz-select">
+          <option value="Custom">Custom</option>
+          <option value="Discovery Meeting">Discovery Meeting</option>
+          <option value="Re-discovery Meeting">Re-discovery Meeting</option>
+          <option value="Strategy and Investment Meeting">Strategy and Investment Meeting</option>
+          <option value="Commitment Meeting">Commitment Meeting</option>
+          <option value="45-Day Momentum Meeting">45-Day Momentum Meeting</option>
+          <option value="Progress Meeting">Progress Meeting</option>
+          <option value="Advanced Planning Meeting">Advanced Planning Meeting</option>
+          <option value="Financial Planning (Bi-weekly)">Financial Planning (Bi-weekly)</option>
+          <option value="Financial Planning (Monthly)">Financial Planning (Monthly)</option>
+          <option value="Financial Planning (Quarterly)">Financial Planning (Quarterly)</option>
+          <option value="Business Consulting (Monthly)">Business Consulting (Monthly)</option>
+          <option value="Business Consulting (Quarterly)">Business Consulting (Quarterly)</option>
+          <option value="Business Consultation (30 min)">Business Consultation (30 min)</option>
+          <option value="Business Consultation (60 min)">Business Consultation (60 min)</option>
+          
+
+          </select>
+        
+        <label id="label_custom" for="name">Event Name</label>
         <input type="text" id="name" name="name" required />
         <label for="location">Event Location</label>
         <input type="text" id="location" name="location" required />
@@ -291,7 +376,7 @@
               id="30min"
               onclick="handleDurationClick(0.5)"
             >
-              30 Minutes
+              30 Min
             </button>
             <button
               class="durationbtn"
@@ -302,10 +387,17 @@
             </button>
             <button
               class="durationbtn"
+              id="1hr30min"
+              onclick="handleDurationClick(1.5)"
+            >
+              90 Min
+            </button>
+            <button
+              class="durationbtn"
               id="2hr"
               onclick="handleDurationClick(2)"
             >
-              2 Hours
+              2 Hour
             </button>
           </div>
         </div>

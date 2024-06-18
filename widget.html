@@ -77,6 +77,26 @@
               document.querySelector("#requirement").innerText =
                 "Select an event to continue";
               await res.map((calendar) => {
+                if(calendar.name.includes("Business")){
+                  const button = document.createElement("button");
+                button.innerText = calendar.name;
+                button.classList.add("event-button");
+                const eventDuration = document.createElement("span");
+                eventDuration.setAttribute("id", "eventDuration");
+                eventDuration.innerText = `Event Duration: ${calendar.slotDuration} minutes`;
+                button.appendChild(eventDuration);
+
+                button.onclick = async () => {
+                  await sessionStorage.setItem("calendar", calendar.id);
+                  window.location.href = `/hello.html?calendar=${calendar.id}`;
+                };
+                document
+                  .getElementById("calendarContainerBus")
+                  .appendChild(button);
+                document.getElementById("secondTitle").removeAttribute("hidden");
+
+                }
+                else{
                 const button = document.createElement("button");
                 button.innerText = calendar.name;
                 button.classList.add("event-button");
@@ -92,7 +112,11 @@
                 document
                   .getElementById("calendarContainer")
                   .appendChild(button);
+                document.getElementById("firstTitle").removeAttribute("hidden");
+              }
               });
+
+              
               const onSiteButton = document.createElement("button");
               onSiteButton.innerText = "Create On Site Event";
               onSiteButton.classList.add("event-button");
@@ -104,7 +128,7 @@
                 window.location.href = `/onsite.html?calendar=KjllYmPcO7r9uCGsWW9O`;
               };
               document
-                .getElementById("calendarContainer")
+                .getElementById("calendarContainerOnSite")
                 .appendChild(onSiteButton);
             });
         } catch (err) {
@@ -219,6 +243,19 @@
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
     }
+    .grid-2gap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .grid-justcenter {
+      display: grid;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
     .event-button {
       border: #45835c 0.7px solid;
       background-color: transparent;
@@ -278,7 +315,14 @@
       "
     >
       <p id="requirement">Loading ....</p>
-      <div id="calendarContainer" class="grid-2"></div>
+      
+      <div id="calendarContainer" class="grid-2">
+        <span id="firstTitle" hidden style="grid-column: span 2 / span 2;">Financial Management Meetings</span>
+      </div>
+      <div id="calendarContainerBus" class="grid-2gap">
+        <span id="secondTitle" hidden style="grid-column: span 2 / span 2;">Business Management Meetings</span>
+      </div>
+      <div id="calendarContainerOnSite" class="grid-justcenter"></div>
       <div id="section-button"></div>
     </main>
   </body>

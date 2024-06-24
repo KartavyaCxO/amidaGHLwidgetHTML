@@ -83,20 +83,86 @@
       background-color: #45835c;
       color: white;
     }
-    .location-field {
-      margin-top: 380px;
-      padding: 4px 4px;
-      border-radius: 5px;
-      outline: none;
-      border: 1px solid #ccc;
-      font-size: 1em;
-    }
-    .location-field:focus {
-      outline: none;
-    }
-    .location-field::placeholder {
-      color: #ccc;
-    }
+    
+    #hiddenModal {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            position: absolute;
+            z-index: 1000;
+            transform: translateX(-200px);
+            justify-items: center;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .location-field {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 200px;
+        }
+        .error-message {
+          
+            color: red;
+            font-size: 12px;
+           /*  grid-column: span 2; */
+            display: none;
+        }
+        #addButton {
+            width: 60px;
+            height: 40px;
+            text-align: center;
+            padding: 10px 20px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            
+            transition: background 0.3s;
+        }
+        #addButton:hover {
+            background: #0056b3;
+        }
+        #guestsList {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 400px;
+            gap: 5px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr; ;
+            
+
+        }
+        .attendee {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+        .attendee span {
+            font-size: 16px;
+        }
+        .attendee button {
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .attendee button:hover {
+            background: #c82333;
+        }
   </style>
   <script>
     const handleNextBtn = () => {
@@ -122,8 +188,102 @@
 
       document.getElementById("def-tz").innerHTML = selected;
     };
+
+    let val = true;
+    const handleGuests = () => {
+       val = !val;
+      val? document.getElementById("hiddenModal").style.display = "block": document.getElementById("hiddenModal").style.display = "none";
+      
+
+    };
+    document.addEventListener('DOMContentLoaded', (event) => {
+            const guests = JSON.parse(sessionStorage.getItem('guests')) || [];
+
+            const nameField = document.getElementById('nameField');
+            const emailField = document.getElementById('emailField');
+            const addButton = document.getElementById('addButton');
+            const guestsList = document.getElementById('guestsList');
+
+            const nameError = document.getElementById('nameError');
+            const emailError = document.getElementById('emailError');
+
+            const renderguests = () => {
+                guestsList.innerHTML = '';
+                guests.forEach((attendee, index) => {
+                    const attendeeDiv = document.createElement('div');
+                    attendeeDiv.classList.add('attendee');
+                    
+                    const attendeeName = document.createElement('span');
+                    attendeeName.textContent = attendee.name;
+
+                    const removeButton = document.createElement('button');
+                    removeButton.textContent = 'X';
+                    removeButton.addEventListener('click', () => {
+                        guests.splice(index, 1);
+                        sessionStorage.setItem('guests', JSON.stringify(guests));
+                        renderguests();
+                    });
+
+                    attendeeDiv.appendChild(attendeeName);
+                    attendeeDiv.appendChild(removeButton);
+                    guestsList.appendChild(attendeeDiv);
+                });
+            };
+
+            const validateEmail = (email) => {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailPattern.test(email);
+            };
+
+            addButton.addEventListener('click', () => {
+                const name = nameField.value;
+                const email = emailField.value;
+                let isValid = true;
+
+                if (!name) {
+                    nameError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    nameError.style.display = 'none';
+                }
+
+                if (!email || !validateEmail(email)) {
+                    emailError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    emailError.style.display = 'none';
+                }
+
+                if (isValid) {
+                    guests.push({ name, email });
+                    sessionStorage.setItem('guests', JSON.stringify(guests));
+                    nameField.value = '';
+                    emailField.value = '';
+                    renderguests();
+                }
+            });
+
+            renderguests();
+        });
   </script>
   <body>
+    <div id="guest-component" style="margin-top: 30px;">
+      <button onclick="handleGuests()" style="background-color: white; border: #335f43 1px solid; border-radius: 4px; padding: 5px; color: #335f43;">Add Guest +</button>
+      <div>
+      <div id="hiddenModal">
+        <div id="guestsList">
+          <!-- List of guests will be displayed here -->
+      </div>
+        <input type="text" class="location-field" id="nameField" placeholder="Name" />
+        <span id="nameError" class="error-message">Please enter a name</span>
+        <input type="email" class="location-field" id="emailField" placeholder="Email" />
+        <span id="emailError" class="error-message">Please enter a valid email</span>
+        <button id="addButton">Add</button>
+    </div>
+  
+ 
+  </div>
+    </div>
     <div
       style="
         display: flex;

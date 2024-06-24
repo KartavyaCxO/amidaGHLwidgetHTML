@@ -304,6 +304,7 @@
           const address = sessionStorage.getItem("address");
           const title = sessionStorage.getItem("title");
           const duration = sessionStorage.getItem("duration");
+          const guests = sessionStorage.getItem("guests");
           console.log("slot", slot);
           try {
   /*           function addHoursToDate(startTimeStr, hoursToAdd) {
@@ -385,6 +386,7 @@
                   address: address,
                   title: title,
                   endDate: endTime,
+                  guests: JSON.stringify(guests),
                 },
               })
               .then(async (response) => {

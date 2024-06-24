@@ -301,6 +301,7 @@
           const lastName = sessionStorage.getItem("lastName");
           const email = sessionStorage.getItem("email");
           const phone = sessionStorage.getItem("phone");
+          const guests = sessionStorage.getItem("guests");
           console.log("slot", slot);
           try {
             await axios
@@ -312,6 +313,7 @@
                   lastName: lastName,
                   email: email,
                   phone: phone,
+                  guests: JSON.stringify(guests),
                 },
               })
               .then(async (response) => {

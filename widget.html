@@ -38,9 +38,27 @@
         ) {
           /* var firstName = data.data[0].First_Name ?? null; */
           var firstName = data.data[0].First_Name ?? null;
+          var isfirstName = firstName ? '✅' : '❌' ;
           var lastName = data.data[0].Last_Name ?? null;
+          var islastname = lastName ? '✅' : '❌' ;
           var email = data.data[0].Email ?? null;
-          var phone = data.data[0].Phone ?? null;
+          var isemail = email ? '✅' : '❌' ;
+          
+          var phone = null; 
+          
+          if(data.data[0].Mobile){
+            phone = data.data[0].Mobile;
+            var isphone = phone ? '✅' : '❌' ;
+          }
+          else if(data.data[0].Phone){
+            phone = data.data[0].Phone;
+            var isphone = phone ? '✅' : '❌' ;
+          }
+          else{
+            phone = null;
+            var isphone = phone ? '✅' : '❌' ;
+          }
+
 
           if (firstName && lastName && email && phone) {
             sessionStorage.setItem("firstName", firstName);
@@ -57,11 +75,20 @@
               email,
               phone
             );
-            //do not show the calendar
+            /* //do not show the calendar
             document.getElementById("main").style.display = "none";
             document.getElementById("fields-missing").style.display = "block";
             document.getElementById("fields-missing").innerHTML =
-              "Please fill in all the fields <br> First Name, Last Name, Email, Phone Number";
+              "Please fill in all the fields <br> First Name, Last Name, Email, Phone Number"; */
+            //conditionally show the missing fields and filled fields
+            document.getElementById("main").style.display = "none";
+            document.getElementById("fields-missing").style.display = "block";
+
+            var fields = document.getElementById("fields-missing");
+            fields.innerHTML = `Fields Missing: <br> First Name: ${isfirstName} <br> Last Name: ${islastname} <br> Email: ${isemail} <br> Phone: ${isphone}`;
+            
+
+            
           }
         });
       });

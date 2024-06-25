@@ -273,6 +273,7 @@
       }
     };
     window.onload = async () => {
+      sessionStorage.setItem("guests",[])
       if(document.getElementById("tz-select").value === "Custom") {
         document.getElementById("name").hidden = false;
         document.getElementById("label_custom").style.display = "block";

@@ -280,7 +280,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
             //get all host data
             //{"0":{"name":"Kartavya Thapa","id":"6L8HvS3IiAKMm64EA6lt"},"1":{"name":"Sibongile Msizi","id":"QvbCxevkxi8ngaCmiEgY"},"2":{"name":"Tatiana Carrard","id":"rcjBMYGvjbsJX3DEoVjK"},"3":{"name":"Deirdre Moore","id":"uXBCorO1kfbCB4k6Slcb"},"4":{"name":"Ana Ramos","id":"vQwYOE6vFP2UkMjeGdZY"}}
             const getHosts = async () => {
-                const response = await axios.get('https://amidawealth.yourcxo.online/amidausers');
+                const calendarId = sessionStorage.getItem('calendar');
+                const options = {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    params:{
+                        calendarId: calendarId
+                    }
+                }
+                const response = await axios.get("https://amidawealth.yourcxo.online/amidausers",{
+                  params:{
+                        calendarId: calendarId
+                    }
+                });
                 console.log(response.data);
                 return response.data;
             };

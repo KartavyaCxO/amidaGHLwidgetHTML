@@ -163,6 +163,7 @@
       const selectedCalendar = sessionStorage.getItem("calendar");
       const timezone = sessionStorage.getItem("timezone");
       const date = new Date(selectedDate);
+      const host = sessionStorage.getItem("host");
       const startTimeInMs = date.getTime();
       const endTimeInMs = startTimeInMs + 86400000;
       //selected date = M/D/YYYY and timezone continent/city
@@ -186,6 +187,7 @@
               startDate: startTimeInMs.toString(),
               endDate: endTimeInMs.toString(),
               timezone: timezone.toString(),
+              host: host.toString(),
             },
           })
           .then(async (response) => {
@@ -305,6 +307,7 @@
           const title = sessionStorage.getItem("title");
           const duration = sessionStorage.getItem("duration");
           const guests = sessionStorage.getItem("guests");
+          const host = sessionStorage.getItem("host");
           console.log("slot", slot);
           try {
   /*           function addHoursToDate(startTimeStr, hoursToAdd) {
@@ -387,6 +390,7 @@
                   title: title,
                   endDate: endTime,
                   guests: guests,
+                  host: host,
                 },
               })
               .then(async (response) => {

@@ -119,11 +119,15 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+           
             
             transition: background 0.3s;
         }
         #addButton:hover {
             background: #335f43;
+        }
+        #guest-component {
+           z-index: 1000  ;
         }
         #guestsList {
             margin-top: 20px;
@@ -131,8 +135,9 @@
             max-width: 400px;
             gap: 5px;
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr; ;
             
+            grid-template-columns: 1fr 1fr 1fr 1fr; ;
+           
 
         }
         .attendee {
@@ -146,6 +151,7 @@
             margin-bottom: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 4px;
+
         }
         .attendee span {
             font-size: 16px;
@@ -161,6 +167,12 @@
         }
         .attendee button:hover {
             background: #c82333;
+        }
+        #auser{
+          position: absolute;
+          top: 30px;
+          transform: translate(0px, 0px);
+          
         }
     </style>
   </style>
@@ -264,7 +276,47 @@ document.addEventListener('DOMContentLoaded', (event) => {
             });
 
             renderguests();
+
+            //get all host data
+            //{"0":{"name":"Kartavya Thapa","id":"6L8HvS3IiAKMm64EA6lt"},"1":{"name":"Sibongile Msizi","id":"QvbCxevkxi8ngaCmiEgY"},"2":{"name":"Tatiana Carrard","id":"rcjBMYGvjbsJX3DEoVjK"},"3":{"name":"Deirdre Moore","id":"uXBCorO1kfbCB4k6Slcb"},"4":{"name":"Ana Ramos","id":"vQwYOE6vFP2UkMjeGdZY"}}
+            const getHosts = async () => {
+                const response = await axios.get('https://amidawealth.yourcxo.online/amidausers');
+                console.log(response.data);
+                return response.data;
+            };
+
+            //iterate over the host data and add as options in the select element hostselector
+            const renderHosts = async () => {
+            const hosts = await getHosts();
+            const hostSelector = document.getElementById('hostselector');
+            // Iterate over the hosts object
+            for (const [key, value] of Object.entries(hosts)) {
+                const option = document.createElement('option');
+                option.value = value.id;
+                option.textContent = value.name;
+                if (value.id === 'vQwYOE6vFP2UkMjeGdZY') {
+                    option.selected = true;
+                }
+                hostSelector.appendChild(option);
+            }
+        };
+            (async () => { 
+            await renderHosts();
+            //initialize the host selection
+            const selectedooptionvalue = document.querySelector('#hostselector').value;
+            console.log(selectedooptionvalue);
+            const host =  sessionStorage.setItem('host', selectedooptionvalue);
+            })();
         });
+
+        //handle host selection change
+        const handleHostSelectionChange = async () => {
+            const hostselector = document.querySelector('#hostselector').value;
+            console.log(hostselector);
+            await sessionStorage.setItem('host', hostselector);
+        };
+
+      
   </script>
   <body>
 
@@ -295,6 +347,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       "
     >
       <date-picker format="MMMM DD (DDD), YYYY"> </date-picker>
+      
     </div>
     <div style="display: flex; flex-direction: column">
       <select onchange="handleSelectionChange()" name="tzselect" id="tz-select">
@@ -1046,7 +1099,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
         <option value="US/Samoa">US/Samoa GMT-11:00</option>
       </select>
     </div>
-      
+    
+    <div id="auser">  
+      <select  name="hostselect" id="hostselector" onchange="handleHostSelectionChange()">
+       
+      </select> 
+    </div>
     <button onclick="handleNextBtn()" id="nextstep" class="next-btn">
       Next
     </button>

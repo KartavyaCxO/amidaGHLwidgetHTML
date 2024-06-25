@@ -85,7 +85,7 @@
             document.getElementById("fields-missing").style.display = "block";
 
             var fields = document.getElementById("fields-missing");
-            fields.innerHTML = `Fields Missing: <br> First Name: ${isfirstName} <br> Last Name: ${islastname} <br> Email: ${isemail} <br> Phone: ${isphone}`;
+            fields.innerHTML = `Missing Requried Fields - <br> First Name: ${isfirstName} <br> Last Name: ${islastname} <br> Email: ${isemail} <br> Phone: ${isphone === '✅' ? isphone : isphone + ' (Please fill either of the following fields | Mobile OR Phone)'}`;
             
 
             

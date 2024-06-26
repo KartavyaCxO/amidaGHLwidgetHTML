@@ -96,6 +96,7 @@
       ZOHO.embeddedApp.init();
       window.onload = async () => {
         await sessionStorage.removeItem("guests");
+        await sessionStorage.removeItem("duration");
         var res = [];
         try {
           const data = await axios
